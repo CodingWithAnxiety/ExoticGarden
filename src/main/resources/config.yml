@@ -6,5 +6,14 @@ chances:
   TREE: 22
   BUSH: 16
   SEEDSDROP: 6
+  FRUIT_DROP: 10    # Chance for fruits to drop when harvesting leaves/plants (%)
+  LEAF_DECAY_DROP: 8  # Chance for fruits to drop from decaying leaves (%)
 options:
   auto-update: true
+  disable-bonemeal: false   # Whether bonemeal can be used on ExoticGarden plants
+  require-shears: false     # If true, players need shears to harvest berry bushes
+  plant-growth:
+    enable-ticks: true      # Whether plants grow naturally over time
+    tick-rate: 12           # Plant growth check frequency in minutes (higher = slower checks)
+    growth-chance: 5        # Chance for a plant to grow per tick (%)
+  creative-drops: false     # Whether plants drop items in creative mode

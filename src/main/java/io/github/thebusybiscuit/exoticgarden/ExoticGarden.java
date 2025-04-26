@@ -58,7 +58,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 public class ExoticGarden extends JavaPlugin implements SlimefunAddon {
@@ -419,11 +421,15 @@ public class ExoticGarden extends JavaPlugin implements SlimefunAddon {
         }
 
         if (treeFruits.contains(check.getId())) {
-            BlockStorage.clearBlockInfo(loc);
-            ItemStack fruits = check.getItem().clone();
-            fruit.getWorld().playEffect(loc, Effect.STEP_SOUND, Material.OAK_LEAVES);
-            fruit.getWorld().dropItemNaturally(loc, fruits);
-            fruit.setType(Material.AIR);
+            // Check if fruit should drop based on config chance
+            Random random = ThreadLocalRandom.current();
+            if (random.nextInt(100) < cfg.getInt("chances.FRUIT_DROP")) {
+                BlockStorage.clearBlockInfo(loc);
+                ItemStack fruits = check.getItem().clone();
+                fruit.getWorld().playEffect(loc, Effect.STEP_SOUND, Material.OAK_LEAVES);
+                fruit.getWorld().dropItemNaturally(loc, fruits);
+                fruit.setType(Material.AIR);
+            }
         }
     }
 

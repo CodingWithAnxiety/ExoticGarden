@@ -306,7 +306,8 @@ public class PlantsListener implements Listener {
             }
 
             if (e.getBlock().getType() == Material.GRASS) {
-                if (!ExoticGarden.getGrassDrops().keySet().isEmpty() && e.getPlayer().getGameMode() != GameMode.CREATIVE) {
+                if (!ExoticGarden.getGrassDrops().keySet().isEmpty() && 
+                    (e.getPlayer().getGameMode() != GameMode.CREATIVE || cfg.getBoolean("options.creative-drops"))) {
                     Random random = ThreadLocalRandom.current();
 
                     if (random.nextInt(100) < cfg.getInt("chances.SEEDSDROP")) {
@@ -318,7 +319,7 @@ public class PlantsListener implements Listener {
             else {
                 ItemStack item = ExoticGarden.harvestPlant(e.getBlock());
 
-                if (item != null) {
+                if (item != null && (e.getPlayer().getGameMode() != GameMode.CREATIVE || cfg.getBoolean("options.creative-drops"))) {
                     e.setCancelled(true);
                     e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), item);
                 }
@@ -343,7 +344,12 @@ public class PlantsListener implements Listener {
             }
         }
 
-        dropFruitFromTree(e.getBlock());
+        // Use the new LEAF_DECAY_DROP chance configuration
+        Random random = ThreadLocalRandom.current();
+        if (random.nextInt(100) < cfg.getInt("chances.LEAF_DECAY_DROP")) {
+            dropFruitFromTree(e.getBlock());
+        }
+        
         ItemStack item = BlockStorage.retrieve(e.getBlock());
 
         if (item != null) {
@@ -360,6 +366,11 @@ public class PlantsListener implements Listener {
         if (e.getPlayer().isSneaking()) return;
 
         if (Slimefun.getProtectionManager().hasPermission(e.getPlayer(), e.getClickedBlock().getLocation(), Interaction.BREAK_BLOCK)) {
+            // Check creative mode drops setting
+            if (e.getPlayer().getGameMode() == GameMode.CREATIVE && !cfg.getBoolean("options.creative-drops")) {
+                return;
+            }
+            
             ItemStack item = ExoticGarden.harvestPlant(e.getClickedBlock());
 
             if (item != null) {
